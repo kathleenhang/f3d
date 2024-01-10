@@ -164,6 +164,7 @@ public:
     vtkRenderWindow* renWin = self->Window.GetRenderWindow();
     vtkF3DRenderer* ren = vtkF3DRenderer::SafeDownCast(renWin->GetRenderers()->GetFirstRenderer());
     vtkF3DRendererWithColoring* renWithColor = vtkF3DRendererWithColoring::SafeDownCast(ren);
+    vtkF3DGenericImporter* renWithAnimation = vtkF3DGenericImporter::SafeDownCast(ren);
     bool checkColoring = false;
     bool render = false;
 
@@ -171,11 +172,21 @@ public:
     switch (keyCode)
     {
       case 'W':
+<<<<<<< HEAD
         self->AnimationManager->CycleAnimation();
         self->Options.set("scene.animation.index", self->AnimationManager->GetAnimationIndex());
         ren->SetAnimationnameInfo(self->AnimationManager->GetAnimationName());
         render = true;
         break;
+=======
+        if (renWithAnimation)
+        {
+          renWithAnimation->CycleAnimations(vtkF3DGenericImporter::CycleType::GLTF);
+          self->Window.PrintAnimationDescription(log::VerboseLevel::DEBUG);
+          checkAnimation = true;
+          render = true;
+        }
+>>>>>>> 4805afa (Update animation options)
       case 'C':
         if (renWithColor)
         {
@@ -358,6 +369,15 @@ public:
       self->Options.set("model.scivis.array-name", renWithColor->GetColoringArrayName());
       self->Options.set("model.scivis.component", renWithColor->GetColoringComponent());
     }
+<<<<<<< HEAD
+=======
+    if (checkAnimation)
+    {
+      // Resynchronise renderer animation status with options
+      self->Options.set("scene.animation.index", renWithAnimation->GetAnimationIndex());
+      self->Options.set("scene.animation.filename", renWithAnimation->GetAnimationName());
+    }
+>>>>>>> 4805afa (Update animation options)
 
     if (render)
     {
