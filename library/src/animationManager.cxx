@@ -31,6 +31,7 @@ void animationManager::Initialize(
 
   // This can be -1 if animation support is not implemented in the importer
   vtkIdType availAnimations = this->Importer->GetNumberOfAnimations();
+  int arrayIndexForAnimation = -1;
 
   if (availAnimations > 0 && interactor)
   {
@@ -273,4 +274,76 @@ bool animationManager::LoadAtTime(double timeValue)
   }
   return true;
 }
+}
+
+//----------------------------------------------------------------------------
+std::string animationManager::GetAnimationDescription()
+{
+  if (!this->Importer)
+    s
+    {
+      return "";
+    }
+
+  std::stringstream stream;
+  animationManager::AnimationInfo info;
+  if (this->Importer->GetInfoForAnimation(this->HasAnimation, this->ArrayIndexForAnimation, info))
+  {
+    stream << "Current Animation " << info.Name << ", "
+           << animationManager::ComponentToString(this->ComponentForAnimation) << "\n";
+  }
+  else
+  {
+    stream << "Not animating\n";
+  }
+  return stream.str();
+}
+//----------------------------------------------------------------------------
+void animationManager::CycleAnimationsForGLTF()
+{
+
+  assert(this->Importer);
+
+  int nIndex = this->Importer->GetNumberOfAnimations();
+  if (nIndex <= 0)
+  {
+    return;
+  }
+
+  if (this->HasAnimation)
+  {
+    this->ArrayIndexForAnimation = (this->ArrayIndexForAnimation + 1) % nIndex;
+  }
+  else
+  {
+    // Cycle through arrays looping back to -1
+    // -1 0 1 2 -1 0 1 2 ...
+    this->ArrayIndexForAnimation = (this->ArrayIndexForAnimation + 2) % (nIndex + 1) - 1;
+  }
+}
+//----------------------------------------------------------------------------
+void animationManager::CycleAnimations(CycleType type)
+{
+  if (!this->Importer)
+  {
+    return;
+  }
+
+  switch (type)
+  {
+    case (CycleType::NONE):
+      return;
+      break;
+    case (CycleType::GLTF):
+      this->CycleAnimationsForGLTF();
+      break;
+    case (CycleType::GLB):
+      this->CycleAnimationsForGLB();
+      break;
+    case (CycleType::FBX):
+      this->CycleAnimationsForFBX();
+      break;
+    default:
+      break;
+  }
 }
