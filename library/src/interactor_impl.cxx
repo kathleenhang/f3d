@@ -164,7 +164,7 @@ public:
     vtkRenderWindow* renWin = self->Window.GetRenderWindow();
     vtkF3DRenderer* ren = vtkF3DRenderer::SafeDownCast(renWin->GetRenderers()->GetFirstRenderer());
     vtkF3DRendererWithColoring* renWithColor = vtkF3DRendererWithColoring::SafeDownCast(ren);
-    vtkF3DGenericImporter* renWithAnimation = vtkF3DGenericImporter::SafeDownCast(ren);
+    vtkF3DGenericImporter* renWithAnimation = animationManager::SafeDownCast(ren);
     bool checkColoring = false;
     bool render = false;
 
@@ -181,7 +181,7 @@ public:
 =======
         if (renWithAnimation)
         {
-          renWithAnimation->CycleAnimations(vtkF3DGenericImporter::CycleType::GLTF);
+          renWithAnimation->CycleAnimations(animationManager::CycleType::GLTF);
           self->Window.PrintAnimationDescription(log::VerboseLevel::DEBUG);
           checkAnimation = true;
           render = true;
