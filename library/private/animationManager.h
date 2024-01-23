@@ -48,6 +48,7 @@ public:
   void CycleAnimation();
   void SelectAnimationIndex(int animationIndex);
   int GetAnimationIndex();
+  std::string GetAnimationName();
 
   /**
    * Return true if the animation manager is playing the animation
