@@ -23,7 +23,11 @@ void animationManager::Initialize(
   this->Playing = false;
   this->CurrentTime = 0;
   this->CurrentTimeSet = false;
+<<<<<<< HEAD
   this->AnimationIndex = 0;
+=======
+  this->AnimationIndex = -1;
+>>>>>>> 2937db2 (Add ability to cycle animation upon "W" key press)
   this->Options = options;
   this->Interactor = interactor;
   this->Window = window;
@@ -34,8 +38,11 @@ void animationManager::Initialize(
   this->AvailAnimations = this->Importer->GetNumberOfAnimations();
 =======
   vtkIdType availAnimations = this->Importer->GetNumberOfAnimations();
+<<<<<<< HEAD
   int arrayIndexForAnimation = -1;
 >>>>>>> ccdc39d (Move animation code from importer -> animation manager class)
+=======
+>>>>>>> 2937db2 (Add ability to cycle animation upon "W" key press)
 
   if (this->AvailAnimations > 0 && interactor)
   {
@@ -82,6 +89,7 @@ void animationManager::Initialize(
   }
   log::debug("");
 
+<<<<<<< HEAD
   this->AnimationIndex = options->getAsInt("scene.animation.index");
 
   if (this->AnimationIndex != 0 && this->AvailAnimations <= 0)
@@ -89,6 +97,15 @@ void animationManager::Initialize(
     log::warn("An animation index has been specified but there are no animation available.");
   }
   else if (this->AnimationIndex > 0 && this->AnimationIndex >= this->AvailAnimations)
+=======
+  this->SelectAnimationIndex(options->getAsInt("scene.animation.index"));
+
+  if (this->AnimationIndex != 0 && availAnimations <= 0)
+  {
+    log::warn("An animation index has been specified but there are no animation available.");
+  }
+  else if (this->AnimationIndex > 0 && this->AnimationIndex >= availAnimations)
+>>>>>>> 2937db2 (Add ability to cycle animation upon "W" key press)
   {
     log::warn(
       "Specified animation index is greater than the highest possible animation index, enabling "
@@ -300,6 +317,7 @@ void animationManager::CycleAnimation()
   this->LoadAtTime(this->TimeRange[0]);
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // ---------------------------------------------------------------------------------
 int animationManager::GetAnimationIndex()
 {
@@ -371,51 +389,38 @@ std::string animationManager::GetAnimationDescription()
 }
 //----------------------------------------------------------------------------
 void animationManager::CycleAnimationsForGLTF()
+=======
+void f3d::detail::animationManager::CycleAnimation()
+>>>>>>> 2937db2 (Add ability to cycle animation upon "W" key press)
 {
 
   assert(this->Importer);
-
   int nIndex = this->Importer->GetNumberOfAnimations();
   if (nIndex <= 0)
   {
     return;
   }
-
   if (this->HasAnimation)
   {
-    this->ArrayIndexForAnimation = (this->ArrayIndexForAnimation + 1) % nIndex;
+    this->AnimationIndex = (this->AnimationIndex + 1) % nIndex;
   }
   else
   {
-    // Cycle through arrays looping back to -1
-    // -1 0 1 2 -1 0 1 2 ...
-    this->ArrayIndexForAnimation = (this->ArrayIndexForAnimation + 2) % (nIndex + 1) - 1;
+    this->AnimationIndex = (this->AnimationIndex + 2) % (nIndex + 1) - 1;
   }
 }
-//----------------------------------------------------------------------------
-void animationManager::CycleAnimations(CycleType type)
+// ---------------------------------------------------------------------------------
+void f3d::detail::animationManager::SelectAnimationIndex(int animationIndex)
 {
-  if (!this->Importer)
-  {
-    return;
-  }
-
-  switch (type)
-  {
-    case (CycleType::NONE):
-      return;
-      break;
-    case (CycleType::GLTF):
-      this->CycleAnimationsForGLTF();
-      break;
-    case (CycleType::GLB):
-      this->CycleAnimationsForGLB();
-      break;
-    case (CycleType::FBX):
-      this->CycleAnimationsForFBX();
-      break;
-    default:
-      break;
-  }
+  this->AnimationIndex = animationIndex;
+  this->Importer->EnableAnimation(animationIndex);
 }
+<<<<<<< HEAD
 >>>>>>> ccdc39d (Move animation code from importer -> animation manager class)
+=======
+// ---------------------------------------------------------------------------------
+int f3d::detail::animationManager::GetAnimationIndex()
+{
+  return this->AnimationIndex;
+}
+>>>>>>> 2937db2 (Add ability to cycle animation upon "W" key press)

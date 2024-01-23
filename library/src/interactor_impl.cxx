@@ -164,7 +164,6 @@ public:
     vtkRenderWindow* renWin = self->Window.GetRenderWindow();
     vtkF3DRenderer* ren = vtkF3DRenderer::SafeDownCast(renWin->GetRenderers()->GetFirstRenderer());
     vtkF3DRendererWithColoring* renWithColor = vtkF3DRendererWithColoring::SafeDownCast(ren);
-    vtkF3DGenericImporter* renWithAnimation = animationManager::SafeDownCast(ren);
     bool checkColoring = false;
     bool render = false;
 
@@ -172,6 +171,7 @@ public:
     switch (keyCode)
     {
       case 'W':
+<<<<<<< HEAD
 <<<<<<< HEAD
         self->AnimationManager->CycleAnimation();
         self->Options.set("scene.animation.index", self->AnimationManager->GetAnimationIndex());
@@ -187,6 +187,16 @@ public:
           render = true;
         }
 >>>>>>> 4805afa (Update animation options)
+=======
+        int animationIndex;
+        self->AnimationManager->CycleAnimation();
+        animationIndex = self->AnimationManager->GetAnimationIndex();
+        self->Options.set("scene.animation.index", animationIndex);
+        self->AnimationManager->SelectAnimationIndex(animationIndex);
+        self->AnimationManager->LoadAtTime(0);
+        render = true;
+        break;
+>>>>>>> 2937db2 (Add ability to cycle animation upon "W" key press)
       case 'C':
         if (renWithColor)
         {
@@ -370,6 +380,7 @@ public:
       self->Options.set("model.scivis.component", renWithColor->GetColoringComponent());
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     if (checkAnimation)
     {
@@ -378,6 +389,8 @@ public:
       self->Options.set("scene.animation.filename", renWithAnimation->GetAnimationName());
     }
 >>>>>>> 4805afa (Update animation options)
+=======
+>>>>>>> 2937db2 (Add ability to cycle animation upon "W" key press)
 
     if (render)
     {
