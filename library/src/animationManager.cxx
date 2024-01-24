@@ -77,7 +77,7 @@ void animationManager::Initialize(
   }
   log::debug("");
 
-  this->SelectAnimationIndex(options->getAsInt("scene.animation.index"));
+  this->AnimationIndex = options->getAsInt("scene.animation.index");
 
   if (this->AnimationIndex != 0 && availAnimations <= 0)
   {
@@ -207,7 +207,6 @@ void animationManager::ToggleAnimation()
     }
   }
 }
-
 //----------------------------------------------------------------------------
 void animationManager::Tick()
 {
@@ -273,38 +272,27 @@ bool animationManager::LoadAtTime(double timeValue)
   }
   return true;
 }
-}
-void f3d::detail::animationManager::CycleAnimation()
+void animationManager::CycleAnimation()
 {
-
   assert(this->Importer);
-  int nIndex = this->Importer->GetNumberOfAnimations();
-  if (nIndex <= 0)
+  int numberOfAnimations = this->Importer->GetNumberOfAnimations();
+  if (numberOfAnimations <= 0)
   {
     return;
   }
-  if (this->HasAnimation)
-  {
-    this->AnimationIndex = (this->AnimationIndex + 1) % nIndex;
-  }
-  else
-  {
-    this->AnimationIndex = (this->AnimationIndex + 2) % (nIndex + 1) - 1;
-  }
+  this->Importer->DisableAnimation(this->AnimationIndex);
+  this->AnimationIndex = (this->AnimationIndex + 1) % numberOfAnimations;
+  this->Importer->EnableAnimation(this->AnimationIndex);
+  this->LoadAtTime(0);
 }
 // ---------------------------------------------------------------------------------
-void f3d::detail::animationManager::SelectAnimationIndex(int animationIndex)
-{
-  this->AnimationIndex = animationIndex;
-  this->Importer->EnableAnimation(animationIndex);
-}
-// ---------------------------------------------------------------------------------
-int f3d::detail::animationManager::GetAnimationIndex()
+int animationManager::GetAnimationIndex()
 {
   return this->AnimationIndex;
 }
 // ---------------------------------------------------------------------------------
-std::string f3d::detail::animationManager::GetAnimationName()
+std::string animationManager::GetAnimationName()
 {
   return this->Importer->GetAnimationName(this->AnimationIndex);
+}
 }

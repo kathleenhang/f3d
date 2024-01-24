@@ -46,7 +46,6 @@ public:
   void StartAnimation();
   void StopAnimation();
   void CycleAnimation();
-  void SelectAnimationIndex(int animationIndex);
   int GetAnimationIndex();
   std::string GetAnimationName();
 
