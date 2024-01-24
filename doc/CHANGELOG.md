@@ -13,6 +13,7 @@ For F3D users:
  - A small margin is added between the model and the grid to avoid potential z-fighting.
  - Add 3MF and X files support (part of `assimp` plugin)
  - Fix potential crashes when reading `assimp` plugin file format
+ - Added ability to cycle through animations by pressing "W" key
 
 For libf3d users:
  - Added `scene.animation.autoplay` option.
