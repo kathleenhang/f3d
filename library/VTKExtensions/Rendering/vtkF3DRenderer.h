@@ -226,6 +226,8 @@ protected:
    */
   void CreateCacheDirectory();
 
+  static std::string ShortName(const std::string& name, int maxChar);
+
   vtkNew<vtkCamera> InitialCamera;
 
   vtkSmartPointer<vtkOrientationMarkerWidget> AxisWidget;
@@ -307,6 +309,7 @@ protected:
   std::string GridInfo;
 
   std::string CachePath;
+  std::string AnimationNameInfo;
 };
 
 #endif
