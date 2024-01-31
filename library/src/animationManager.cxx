@@ -23,16 +23,16 @@ void animationManager::Initialize(
   this->Playing = false;
   this->CurrentTime = 0;
   this->CurrentTimeSet = false;
-  this->AnimationIndex = -1;
+  this->AnimationIndex = 0;
   this->Options = options;
   this->Interactor = interactor;
   this->Window = window;
   this->Importer = importer;
 
   // This can be -1 if animation support is not implemented in the importer
-  vtkIdType availAnimations = this->Importer->GetNumberOfAnimations();
+  this->AvailAnimations = this->Importer->GetNumberOfAnimations();
 
-  if (availAnimations > 0 && interactor)
+  if (this->AvailAnimations > 0 && interactor)
   {
     this->ProgressWidget = vtkSmartPointer<vtkProgressBarWidget>::New();
     interactor->SetInteractorOn(this->ProgressWidget);
@@ -63,7 +63,7 @@ void animationManager::Initialize(
     this->ProgressWidget = nullptr;
   }
 
-  if (availAnimations <= 0)
+  if (this->AvailAnimations <= 0)
   {
     log::debug("No animations available in this file");
   }
@@ -71,7 +71,7 @@ void animationManager::Initialize(
   {
     log::debug("Animation(s) available in this file are:");
   }
-  for (int i = 0; i < availAnimations; i++)
+  for (int i = 0; i < this->AvailAnimations; i++)
   {
     log::debug(i, ": ", this->Importer->GetAnimationName(i));
   }
@@ -79,11 +79,11 @@ void animationManager::Initialize(
 
   this->AnimationIndex = options->getAsInt("scene.animation.index");
 
-  if (this->AnimationIndex != 0 && availAnimations <= 0)
+  if (this->AnimationIndex != 0 && this->AvailAnimations <= 0)
   {
     log::warn("An animation index has been specified but there are no animation available.");
   }
-  else if (this->AnimationIndex > 0 && this->AnimationIndex >= availAnimations)
+  else if (this->AnimationIndex > 0 && this->AnimationIndex >= this->AvailAnimations)
   {
     log::warn(
       "Specified animation index is greater than the highest possible animation index, enabling "
@@ -93,7 +93,7 @@ void animationManager::Initialize(
   }
   else if (this->AnimationIndex <= -1)
   {
-    for (int i = 0; i < availAnimations; i++)
+    for (int i = 0; i < this->AvailAnimations; i++)
     {
       this->Importer->EnableAnimation(i);
     }
@@ -275,15 +275,24 @@ bool animationManager::LoadAtTime(double timeValue)
 void animationManager::CycleAnimation()
 {
   assert(this->Importer);
-  int numberOfAnimations = this->Importer->GetNumberOfAnimations();
-  if (numberOfAnimations <= 0)
+  if (this->AvailAnimations <= 0)
   {
     return;
   }
-  this->Importer->DisableAnimation(this->AnimationIndex);
-  this->AnimationIndex = (this->AnimationIndex + 1) % numberOfAnimations;
-  this->Importer->EnableAnimation(this->AnimationIndex);
-  this->LoadAtTime(0);
+
+  this->DisableAllAnimation();
+
+  if (this->AnimationIndex == this->AvailAnimations - 1)
+  {
+    this->AnimationIndex = -1;
+  }
+  else
+  {
+    this->AnimationIndex += 1;
+  }
+  this->EnableAllAnimation();
+  
+  this->LoadAtTime(this->TimeRange[0]);
 }
 // ---------------------------------------------------------------------------------
 int animationManager::GetAnimationIndex()
@@ -293,6 +302,40 @@ int animationManager::GetAnimationIndex()
 // ---------------------------------------------------------------------------------
 std::string animationManager::GetAnimationName()
 {
+  if (this->AnimationIndex == -1)
+  {
+    return "All Animations";
+  }
   return this->Importer->GetAnimationName(this->AnimationIndex);
+}
+//----------------------------------------------------------------------------
+void animationManager::EnableAllAnimation()
+{
+  if (this->AnimationIndex == this->AvailAnimations - 1)
+  {
+    for (int i = 0; i < this->AvailAnimations; i++)
+    {
+        this->Importer->EnableAnimation(i);
+    }
+  }
+  else
+  {
+    this->Importer->EnableAnimation(this->AnimationIndex);
+  }
+}
+//----------------------------------------------------------------------------
+void animationManager::DisableAllAnimation()
+{
+  if (this->AnimationIndex == this->AvailAnimations - 1)
+  {
+    for (int i = 0; i < this->AvailAnimations; i++)
+    {
+        this->Importer->DisableAnimation(i);
+    }
+  }
+  else
+  {
+    this->Importer->DisableAnimation(this->AnimationIndex);
+  }
 }
 }
